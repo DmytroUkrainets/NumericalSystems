@@ -1,75 +1,33 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class CalculationSystems {
-    /** Створюємо об'єкт класу */
-    CalculationSystems(int p, int q, String R){
-        this.p = p;
-        this.q = q;
-        this.R = R;
 
-        //System.out.println("Дана стрічна при переведені в число = " + toNumber(R));
-    }
-
-    /** Обчислюємо число у заданій сис. числення */
+    /** We calculate the number in the given system. calculus */
     public String getInRadix(int p, int q, String R) {
         char[] digits = characters();
         if (q<2 || q>36)
             throw new IllegalArgumentException();
         if (p==q)
-            return new String(R);
+            return R;
         else if (p==10) {
-            String res = new String();
+            StringBuilder res = new StringBuilder();
             double beginFloat = Double.parseDouble(R);/*toNumber(R, 10);*/
             if(beginFloat == (int) beginFloat) {
-                if (beginFloat >= 0) {
-                    do {
-                        res = digits[(int) (beginFloat % q)] + res;
-                        beginFloat = beginFloat / q;
-                    } while (beginFloat >= q);
-                    res = digits[(int) beginFloat] + res;
-                }
-                if (beginFloat < 0) {
-                    beginFloat = Math.abs(beginFloat);
-                    do {
-                        res = digits[(int) (beginFloat % q)] + res;
-                        beginFloat = beginFloat / q;
-                    } while (beginFloat >= q);
-                    res = digits[(int) beginFloat] + res;
-                    res = new String("-" + res);
-                }
-                return res.toString();
+                res = getStringBuilder(q, digits, res, beginFloat);
             }
             else {
                 double n = Math.abs(beginFloat);
-                double fraction = n - ((int) n);//початковий дріб
-                String drib = new String(",");// стрічка куди записуємо результат
-                String str = "" + fraction;// просто для визначення довжини дробу
-                int element;// результит покракового обчислення
+                double fraction = n - ((int) n); //initial fraction
+                StringBuilder drib = new StringBuilder(","); // tape where we record the result
+                String str = "" + fraction;// just to determine the length of the fraction
+                int element; // the result of a step-by-step calculation
                 for(int i=0; i<str.length()-1; i++) {
                     element = (int) (fraction * q);
                     fraction = (fraction * q) - element;
-                    drib += digits[element];
+                    drib.append(digits[element]);
                 }
-                if (beginFloat >= 0) {
-                    do {
-                        res = digits[(int) (beginFloat % q)] + res;
-                        beginFloat = beginFloat / q;
-                    } while (beginFloat >= q);
-                    res = digits[(int) beginFloat] + res;
-                }
-                if (beginFloat < 0) {
-                    beginFloat = Math.abs(beginFloat);
-                    do {
-                        res = digits[(int) (beginFloat % q)] + res;
-                        beginFloat = beginFloat / q;
-                    } while (beginFloat >= q);
-                    res = digits[(int) beginFloat] + res;
-                    res = new String("-" + res);
-                }
-                res += drib;
-                return res.toString();
+                res = getStringBuilder(q, digits, res, beginFloat);
+                res.append(drib);
             }
+            return res.toString();
         }
         else {
             double beginFloat = toNumber(R, p);
@@ -78,12 +36,32 @@ public class CalculationSystems {
         }
     }
 
-    /** Приймаємо число у вигляді стрічки та перетворюємо його на число у 10-ковій сис. числення */
+    private StringBuilder getStringBuilder(int q, char[] digits, StringBuilder res, double beginFloat) {
+        if (beginFloat >= 0) {
+            do {
+                res.insert(0, digits[(int) (beginFloat % q)]);
+                beginFloat = beginFloat / q;
+            } while (beginFloat >= q);
+            res.insert(0, digits[(int) beginFloat]);
+        }
+        if (beginFloat < 0) {
+            beginFloat = Math.abs(beginFloat);
+            do {
+                res.insert(0, digits[(int) (beginFloat % q)]);
+                beginFloat = beginFloat / q;
+            } while (beginFloat >= q);
+            res.insert(0, digits[(int) beginFloat]);
+            res = new StringBuilder("-" + res);
+        }
+        return res;
+    }
+
+    /** We take the number in the form of a tape and convert it into a number in the 10-digit system. counting */
     private double toNumber(String input, int p) {
         double res = 0;
         int koma = -1;
         boolean minus = false;
-        for(int i=0; i<input.length(); i++) {// знаходимо номер коми та перевіряємо на мінус
+        for(int i=0; i<input.length(); i++) {// find the comma number and check for minus
             char symbol = input.charAt(i);
             if (symbol=='-')
                 minus = true;
@@ -91,9 +69,8 @@ public class CalculationSystems {
                 koma = i;
                 break;
             }
-            koma = -1;
         }
-        if(koma == -1) { // ціле число
+        if(koma == -1) { // integer
             if (!minus) {
                 int power = input.length() - 1;
                 for (int i = 0; i < input.length(); i++) {
@@ -112,7 +89,7 @@ public class CalculationSystems {
                 res *= -1;
             }
         }
-        if(koma != -1) { // дробове
+        if(koma != -1) { // fractional
             double drib=0;
             for (int i = 1; i < input.length()-koma; i++) {
                 char symbol = input.charAt(i+koma);
@@ -142,7 +119,7 @@ public class CalculationSystems {
         return res;
     }
 
-    /** Приймаємо число у вигляді символа та перетворюємо його в число типу float */
+    /** We accept a number in the form of a symbol and convert it into a number of type float */
     private int getIndex(char input) {
         char[] digits = characters();
         for(int i=0; i<digits.length; i++) {
@@ -153,7 +130,7 @@ public class CalculationSystems {
         return -1;
     }
 
-    /** Створюємо масив чисел */
+    /** We create an array of numbers */
     private char[] characters() {
         int k=0;
         for(char i='0'; i<='9'; i++){
@@ -166,9 +143,5 @@ public class CalculationSystems {
     }
 
 
-
-    private int p; // задана основа системи числення з якої переводимо
-    private int q; // задана основа числення в яку переводимо
-    private String R; // дійсне вхідне число від користувача
-    private char[] digits = new char[36]; // масив чисел
+    private final char[] digits = new char[36]; // array of numbers
 }

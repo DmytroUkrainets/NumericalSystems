@@ -9,7 +9,7 @@ public class DataInput {
 
     private static void writeText(String wr) {
         if (wr == null) {
-            System.out.print("Введіть дані: ");
+            System.out.print("Enter the data: ");
         } else {
             System.out.print(wr);
         }
