@@ -4,7 +4,7 @@ import java.util.Scanner;
 /**
  * <p>
  * @author Dmytro Ukarinets
- * @Завдання: Create a program that for a given base of the number system p and a real number R
+ * @Task: Create a program that for a given base of the number system p and a real number R
  * in this system ( -109 < D(R) < +109 ; D(R) is the decimal equivalent of the number R;
  * after the comma - up to three digits) would receive and display the number S - the representation of the number R
  * in the number system with base q. The number of decimal places in the number S is not less than in R.
